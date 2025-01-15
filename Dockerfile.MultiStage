@@ -1,0 +1,35 @@
+#This is a example dockerfile with multiple stages. Its been observed that sonar scanning 
+#failing due to version mismatch.
+# Stage 1: Run SonarScanner
+FROM maven:3.6.3-openjdk-11 AS sonar-scanner
+ARG SONAR_ENABLED=true
+ARG SONAR_URL=
+ARG SONAR_ORGANIZATION=
+ARG SONAR_USERNAME=
+ARG SONAR_PASSWORD=
+ARG SONAR_BRANCH=
+ARG SONAR_TOKEN=
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN if [ "$SONAR_ENABLED" = "true" ] ; \
+    then mvn -B sonar:sonar \
+        -Dsonar.host.url=${SONAR_URL} \
+        -Dsonar.organization=${SONAR_ORGANIZATION} \
+        -Dsonar.branch.name=${SONAR_BRANCH} \
+        -Dsonar.token=${SONAR_TOKEN}; \
+    fi
+
+# Stage 2: Installing Maven Dependencies
+FROM maven:3.6.3-openjdk-11 AS build-stage
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn package -DskipTests
+
+# Stage 3: Create the final image with the built application
+FROM openjdk:11-jre-slim as image-stage
+WORKDIR /app
+COPY --from=build-stage /app/target/spring-petclinic-2.7.3.jar app.jar
+EXPOSE 8080
+CMD ["java", "-jar", "app.jar"]
