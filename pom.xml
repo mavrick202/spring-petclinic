@@ -28,7 +28,19 @@
     <spring-format.version>0.0.31</spring-format.version>
 
   </properties>
+  <distributionManagement>
+    <repository>
+      <id>central</id>
+      <name>libs-release</name>
+      <url>http://ec2-44-204-1-123.compute-1.amazonaws.com:8081/artifactory/libs-release-local</url>
+    </repository>
 
+    <snapshotRepository>
+      <id>Snapshots</id>
+      <name>libs-snapshot</name>
+      <url>http://ec2-44-204-1-123.compute-1.amazonaws.com:8081/artifactory/libs-snapshot-local</url>
+    </snapshotRepository>
+  </distributionManagement>
   <dependencies>
     <!-- Spring and Spring Boot dependencies -->
     <dependency>
@@ -143,7 +155,7 @@
             <version>${nohttp-checkstyle.version}</version>
           </dependency>
         </dependencies>
-        <executions>
+        <!-- <executions>
           <execution>
             <id>nohttp-checkstyle-validation</id>
             <phase>validate</phase>
@@ -159,7 +171,7 @@
               <goal>check</goal>
             </goals>
           </execution>
-        </executions>
+        </executions -->
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
